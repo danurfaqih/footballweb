@@ -1,4 +1,18 @@
+import { useState } from "react";
+
 const StandingTables = ({ league, standings }) => {
+  const [sortOrder, setSortOrder] = useState("asc");
+
+  const toggleSortOrder = () => {
+    setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+  }
+
+  const sortedStandings = [...(standings  || [])].sort((a, b) => {
+    return sortOrder === "asc"
+      ? a.position - b.position
+      : b.position - a.position;
+  });
+
   return (
     <>
       <div className="flex flex-col items-center justify-center w-screen bg-white dark:bg-gray-900 pt-3 pb-10">
@@ -12,7 +26,9 @@ const StandingTables = ({ league, standings }) => {
                 <table className="min-w-full text-sm text-gray-900 dark:text-white">
                   <thead className="bg-white dark:bg-gray-700 text-xs uppercase font-medium">
                     <tr>
-                      <th></th>
+                      <th className="cursor-pointer" onClick={toggleSortOrder}>
+                        #
+                      </th>
                       <th
                         scope="col"
                         className="px-3 md:px-6 py-3 text-left tracking-wider"
@@ -71,7 +87,7 @@ const StandingTables = ({ league, standings }) => {
                   </thead>
                   <tbody className="bg-white dark:bg-gray-700">
                     {standings &&
-                      standings.map((item, index) => (
+                      sortedStandings.map((item, index) => (
                         <tr
                           key={index}
                           className={
@@ -80,7 +96,7 @@ const StandingTables = ({ league, standings }) => {
                             : ""
                           }
                         >
-                          <td className="pl-4">{item.position}</td>
+                          <td className={`pl-4 ${item.position <= 4 ? 'border-l-2 border-l-blue-400' : ''} ${item.position === 5  ? 'border-l-2 border-l-red-400' : ''}`}>{item.position}</td>
                           <td className="flex px-3 md:px-6 py-4 whitespace-nowrap">
                             <img
                               className="w-5"
